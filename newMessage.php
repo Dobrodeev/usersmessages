@@ -19,17 +19,62 @@ require_once 'ConnectDB.php';
         <?php
         $querySurname = "SELECT DISTINCT surname FROM users";
         $query = mysqli_query($connect, $querySurname);
-        $num = mysqli_num_rows($query);
         echo '<select name="surname[]" id="" class="form-control">';
         echo '<option disabled hidden selected value="">Your surname</option>';
-
+        while ($all = mysqli_fetch_assoc($query))
+        {
+            echo '<option>'.$all['surname'].'</option>';
+        }
+        echo '</select>';
+        $queryEmail = 'SELECT email FROM users';
+        $allEmails = mysqli_query($connect, $queryEmail);
+        echo '<select name="email[]" class="form-control">';
+        echo '<option disabled hidden selected value="">Your @email</option>';
+        while ($allEmail = mysqli_fetch_assoc($allEmails))
+        {
+            echo '<option>'.$allEmail['email'].'</option>';
+        }
         echo '</select>';
         ?>
-        <input type="text" placeholder="Your message" name="message" class="form-control"><br>
-        <input type="submit" name="send" value="send"><br>
+        <textarea class="form-control" rows="3" name="message"></textarea><br>
+        <input type="submit" name="go" value="send"><br><br>
+        <input type="reset" value="Cancel"><br>
     </div>
 </form>
+<?php
+function clearMessage($message)
+{
+    $m = trim($message);
+    $m = htmlspecialchars($message);
+    $m = strip_tags($message);
+    return $m;
+}
+if ($_POST['go'])
+{
+    if ($_POST['message'])
+    {
+        echo '<pre>';
+        print_r($_POST);
+        echo '</pre>';
+        $message = clearMessage($_POST['message']);
+        $surname = $_POST['surname'][0];
+        $email = $_POST['email'][0];
+        echo 'message: '.$message.' surname: '.$surname.' email: '.$email.'<br>';;
+//        $queryUser = "SELECT * FROM messages WHERE surname ='$surname' AND email='$email' AND message=''";
+        $queryUser = "SELECT * FROM messages WHERE surname ='$surname'";
+        $result = mysqli_query($connect, $queryUser);
+        $nom = mysqli_num_rows($result);
+        echo 'mysqli_num_rows() = '.$nom.'<br>';
+        if ($nom != 0)
+        {
+            $messageQuery = "UPDATE messages SET message='$message' WHERE surname = '$surname' AND email = '$email'";
+            $insertMessage = mysqli_query($connect, $messageQuery);
+        }
 
-
+    }
+    else
+        echo 'Enter your message.<br>';
+}
+?>
 </body>
 </html>

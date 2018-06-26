@@ -12,7 +12,7 @@
 <script src="bootstrap4/jquery-3.3.1.js"></script>
 <script src="bootstrap4/js/bootstrap.min.js"></script>
 <a href="addUser.php">Add user</a><br>
-<a href="addMessage.php">Add message</a><br>
+<a href="newMessage.php">Add message</a><br>
 <a href="userAndMessage.php">Show messages</a><br>
 </body>
 </html>

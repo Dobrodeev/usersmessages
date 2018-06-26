@@ -40,6 +40,7 @@ require_once 'ConnectDB.php';
         <input type="submit" name="go" value="send"><br><br>
         <input type="reset" value="Cancel"><br>
     </div>
+    <h2><? echo $resultMessage ?></h2>
 </form>
 <?php
 function clearMessage($message)
@@ -57,24 +58,39 @@ if ($_POST['go'])
         print_r($_POST);
         echo '</pre>';
         $message = clearMessage($_POST['message']);
-        $surname = $_POST['surname'][0];
-        $email = $_POST['email'][0];
-        echo 'message: '.$message.' surname: '.$surname.' email: '.$email.'<br>';;
-//        $queryUser = "SELECT * FROM messages WHERE surname ='$surname' AND email='$email' AND message=''";
-        $queryUser = "SELECT * FROM messages WHERE surname ='$surname'";
+        $surname = implode(',',$_POST['surname']);
+        $email = implode(',', $_POST['email']);
+        echo 'message: '.$message.' surname: '.$surname.' email: '.$email.'<br>';
+        $queryUser = "SELECT * FROM messages WHERE surname ='$surname' AND email='$email' AND message IS NULL";
         $result = mysqli_query($connect, $queryUser);
         $nom = mysqli_num_rows($result);
-        echo 'mysqli_num_rows() = '.$nom.'<br>';
         if ($nom != 0)
         {
             $messageQuery = "UPDATE messages SET message='$message' WHERE surname = '$surname' AND email = '$email'";
             $insertMessage = mysqli_query($connect, $messageQuery);
+            $resultMessage = 'Добавили запись';
         }
+        elseif ($num == 0)
+        {
+            $q = "SELECT * FROM messages WHERE surname='$surname' AND email='$email' AND message IS NOT NULL";
+            $result2 = mysqli_query($connect, $q);
+            $nom2 = mysqli_num_rows($result2);
+            if ($nom2 != 0)
+            {
+                $messageQuery = "INSERT INTO messages (id_user, surname, email) SELECT id_user, surname, email FROM users WHERE surname=$surname AND email='$email'";
+                // mysqli_num_rows()
+                // UPDATE WHERE message IS NULL
+            }
+
+
+        }
+
 
     }
     else
         echo 'Enter your message.<br>';
 }
 ?>
+
 </body>
 </html>

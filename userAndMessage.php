@@ -13,8 +13,9 @@
 <script src="bootstrap4/js/bootstrap.min.js"></script>
 <?php
 require_once 'connectDB.php';
-$q = 'SELECT surname FROM users RIGHT OUTER JOIN messages ON users.id_user = messages.id_user';
-$all = mysqli_query($connect, $q);
+//$q = 'SELECT surname FROM users RIGHT OUTER JOIN messages ON users.id_user = messages.id_user';
+$queryJOIN = "SELECT users.surname, messages.message FROM users RIGHT JOIN messages ON users.id_user = messages.id_user";
+$all = mysqli_query($connect, $queryJOIN);
 $all_message = mysqli_fetch_array($all, MYSQLI_ASSOC);
 echo '<pre>';
 print_r($all_message);

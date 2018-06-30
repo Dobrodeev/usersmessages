@@ -77,9 +77,33 @@ if ($_POST['go'])
             $nom2 = mysqli_num_rows($result2);
             if ($nom2 != 0)
             {
-                $messageQuery = "INSERT INTO messages (id_user, surname, email) SELECT id_user, surname, email FROM users WHERE surname=$surname AND email='$email'";
+//                $messageQuery = "INSERT INTO messages (id_user, surname, email) VALUES (SELECT id_user, surname, email FROM users WHERE surname='$surname' AND email='$email')";
                 // mysqli_num_rows()
                 // UPDATE WHERE message IS NULL
+//                $res = mysqli_query($connect, $messageQuery);
+//                $num = mysqli_num_rows($res);
+//                echo 'num_rows = '.$num.'<br>';
+//                $resultMessage = 'Новая запись добавлена';
+                $queryForInsert = "SELECT id_user, surname, email FROM users WHERE surname='$surname' AND email='$email'";
+                $resultInsert = mysqli_query($connect, $queryForInsert);
+                $num_rows = mysqli_num_rows($resultInsert);
+                echo 'num_rows = '.$num_rows.'<br>';
+                $forSelect = mysqli_fetch_array($resultInsert, MYSQLI_ASSOC);
+                echo '<pre>';
+                print_r($forSelect);
+                echo '</pre>';
+                $id_user = $forSelect['id_user'];
+                $surname = $forSelect['surname'];
+                $email = $forSelect['email'];
+                $insert = "INSERT INTO messages (id_user, surname, email) VALUES ('$id_user', '$surname', '$email')";
+                $ins = mysqli_query($connect, $insert);
+                $lastID = mysqli_insert_id($connect);
+                echo 'last id: '.$lastID.'<br>';
+                $updateQuery = "UPDATE messages SET message='$message' WHERE id_message='$lastID'";
+                $updateResult = mysqli_query($connect, $updateQuery);
+                $insert_num_rows = mysqli_num_rows($updateResult);
+                echo 'insert_num_rows = '.$insert_num_rows.'<br>';
+
             }
 
 

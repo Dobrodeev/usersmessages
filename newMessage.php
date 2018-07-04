@@ -64,27 +64,30 @@ if ($_POST['go'])
         $queryUser = "SELECT * FROM messages WHERE surname ='$surname' AND email='$email' AND message IS NULL";
         $result = mysqli_query($connect, $queryUser);
         $nom = mysqli_num_rows($result);
-        if ($nom != 0)
+        if ($nom != 0) // есть user
         {
             $messageQuery = "UPDATE messages SET message='$message' WHERE surname = '$surname' AND email = '$email'";
             $insertMessage = mysqli_query($connect, $messageQuery);
             $resultMessage = 'Добавили запись';
         }
-        elseif ($num == 0)
+        elseif ($nom == 0) // есть уже message
         {
             $q = "SELECT * FROM messages WHERE surname='$surname' AND email='$email' AND message IS NOT NULL";
             $result2 = mysqli_query($connect, $q);
             $nom2 = mysqli_num_rows($result2);
             if ($nom2 != 0)
             {
-//                $messageQuery = "INSERT INTO messages (id_user, surname, email) VALUES (SELECT id_user, surname, email FROM users WHERE surname='$surname' AND email='$email')";
+                $messageQuery = "INSERT INTO messages (id_user, surname, email) SELECT id_user, surname, email FROM users WHERE surname='$surname' AND email='$email'";
+                $forInsert = mysqli_query($connect, $messageQuery);
+                $updateQuery = "UPDATE messages SET message='$message' WHERE surname='$surname' AND email='$email' AND message IS NULL";
+                $updateResult = mysqli_query($connect, $updateQuery);
                 // mysqli_num_rows()
                 // UPDATE WHERE message IS NULL
 //                $res = mysqli_query($connect, $messageQuery);
 //                $num = mysqli_num_rows($res);
 //                echo 'num_rows = '.$num.'<br>';
 //                $resultMessage = 'Новая запись добавлена';
-                $queryForInsert = "SELECT id_user, surname, email FROM users WHERE surname='$surname' AND email='$email'";
+                /*$queryForInsert = "SELECT id_user, surname, email FROM users WHERE surname='$surname' AND email='$email'";
                 $resultInsert = mysqli_query($connect, $queryForInsert);
                 $num_rows = mysqli_num_rows($resultInsert);
                 echo 'num_rows = '.$num_rows.'<br>';
@@ -99,11 +102,12 @@ if ($_POST['go'])
                 $ins = mysqli_query($connect, $insert);
                 $lastID = mysqli_insert_id($connect);
                 echo 'last id: '.$lastID.'<br>';
-                $updateQuery = "UPDATE messages SET message='$message' WHERE id_message='$lastID'";
+//                $updateQuery = "UPDATE messages SET message='$message' WHERE id_message='$lastID'";
+                $updateQuery = "SELECT * FROM messages WHERE surname='$surname' AND email='$email' AND message IS NULL";
                 $updateResult = mysqli_query($connect, $updateQuery);
                 $insert_num_rows = mysqli_num_rows($updateResult);
                 echo 'insert_num_rows = '.$insert_num_rows.'<br>';
-
+                */
             }
 
 
